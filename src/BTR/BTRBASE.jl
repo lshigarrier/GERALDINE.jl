@@ -104,7 +104,7 @@ function TruncatedCG(state::BTRState)
     return s
 end
 
-function TCG_LBHHH(state::BTRState, Hx::Function)
+function TCG_HOPS(state::BTRState, Hx::Function)
     g = state.g
     Δ = state.Δ*state.Δ
     n = length(g)

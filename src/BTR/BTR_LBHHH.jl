@@ -1,4 +1,4 @@
-function btr_LBHHH(f::Function, g!::Function, Hx::Function, state::BTRState, x0::Vector, tTest::Function; 
+function btr_HOPS(f::Function, g!::Function, Hx::Function, state::BTRState, x0::Vector, tTest::Function; 
         verbose::Bool = false, nmax::Int64 = 1000, epsilon::Float64 = 1e-6, time_tol::Float64 = 120.0,
         accumulate!::Function, accumulator::Array)
     
@@ -20,7 +20,7 @@ function btr_LBHHH(f::Function, g!::Function, Hx::Function, state::BTRState, x0:
             println(state.iter+1)
             #println(state)
         end
-        state.step = TCG_LBHHH(state, Hx)
+        state.step = TCG_HOPS(state, Hx)
         state.xcand = state.x+state.step
         fcand = f(state.xcand)
         state.ρ = (fcand-state.fx)/(dot(state.step, state.g)+0.5*dot(state.step, Hx(state.step)))
@@ -39,7 +39,7 @@ function btr_LBHHH(f::Function, g!::Function, Hx::Function, state::BTRState, x0:
     return state, accumulator
 end
 
-function OPTIM_btr_LBHHH(f::Function, g_score!::Function, x0::Vector, weights::Vector;
+function OPTIM_btr_HOPS(f::Function, g_score!::Function, x0::Vector, weights::Vector;
         verbose::Bool = true, nmax::Int64 = 1000, epsilon::Float64 = 1e-4,
         time_tol::Float64 = 1e4, tTest::Function = par -> false)
 
@@ -58,7 +58,7 @@ function OPTIM_btr_LBHHH(f::Function, g_score!::Function, x0::Vector, weights::V
 
     Hx(x::Vector) = (1/n)*sum(weights[i]*dot(state.H[i], x)*state.H[i] for i in 1:inds)
         
-    state, accumulator = btr_LBHHH(f, g_score!, Hx, state, x0, tTest,
+    state, accumulator = btr_HOPS(f, g_score!, Hx, state, x0, tTest,
                 verbose = verbose, nmax = nmax, epsilon = epsilon, time_tol = time_tol,
                 accumulate! = accumulate!, accumulator = accumulator)
     return state, accumulator
